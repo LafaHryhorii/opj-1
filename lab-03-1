@@ -1,0 +1,104 @@
+package lab03;
+
+/**
+ * Клас для обчислення суми ряду:
+ * Sum[i=1..k] (sqrt(m * (1/i) * sin(m * i))), k <= 30
+ *
+ * @author Gemini
+ */
+public class SeriesSumCalculator {
+
+    /**
+     * Точка входу. Тестує метод calculateSeriesSum(m, k) з різними
+     * дозволеними та забороненими комбінаціями аргументів.
+     */
+    public static void main(String[] args) {
+        System.out.println("--- Тестування: Сума ряду ---");
+        
+        // --- Дозволені комбінації (коректні аргументи) ---
+        System.out.println("\n✅ Дозволені комбінації:");
+        
+        // 1. m > 0, k в межах, всі корені коректні (m*i < Pi)
+        printResults(0.5, 10);
+        
+        // 2. m < 0, k в межах, всі корені коректні (m*i в 3-му/4-му квадранті)
+        printResults(-0.5, 5);
+        
+        // 3. Максимальне значення k
+        printResults(0.1, 30);
+        
+        // 4. m = 0 (сума = 0)
+        printResults(0.0, 5);
+        
+        
+        // --- Заборонені комбінації (тестування винятків) ---
+        System.out.println("\n❌ Заборонені комбінації:");
+        
+        // 5. k > 30 (порушення граничної умови)
+        printResults(1.0, 31);
+        
+        // 6. k < 1 (порушення граничної умови)
+        printResults(1.0, 0);
+        
+        // 7. Від'ємний вираз під коренем (m > 0, але sin(m*i) < 0)
+        // Для m=5.0, i=1: m*sin(m) ≈ 5 * sin(5 рад) < 0
+        printResults(5.0, 5);
+        
+        // 8. Від'ємний вираз під коренем (m < 0, але sin(m*i) > 0)
+        // Для m=-5.0, i=1: m*sin(m) ≈ -5 * sin(-5 рад) < 0
+        printResults(-5.0, 5);
+    }
+
+    /**
+     * Обчислює суму ряду: Sum[i=1..k] (sqrt(m * (1/i) * sin(m * i))).
+     *
+     * @param m Параметр ряду (дійсне число).
+     * @param k Верхня межа підсумовування (ціле число, 1 <= k <= 30).
+     * @return Сума ряду (дійсне число).
+     * @throws IllegalArgumentException якщо k поза [1, 30] або якщо будь-який член ряду є недійсним
+     * (вираз під коренем від'ємний).
+     */
+    public static double calculateSeriesSum(double m, int k) throws IllegalArgumentException {
+        // 1. Перевірка параметра k (умова з завдання: k <= 30 та k >= 1)
+        if (k < 1 || k > 30) {
+            throw new IllegalArgumentException("Параметр k (" + k + ") повинен бути в діапазоні [1, 30].");
+        }
+
+        double sum = 0.0;
+        
+        // 2. Ітерація та підсумовування
+        for (int i = 1; i <= k; i++) {
+            // Обчислення виразу під коренем
+            double insideRoot = m * (1.0 / i) * Math.sin(m * i);
+
+            // 3. Перевірка умови невід'ємності кореня
+            if (insideRoot < 0) {
+                // Викидання винятку, якщо умова порушена
+                throw new IllegalArgumentException(
+                    "Вираз під коренем від'ємний для i=" + i + 
+                    " (значення: " + insideRoot + "). Обчислення неможливе."
+                );
+            }
+            
+            sum += Math.sqrt(insideRoot);
+        }
+
+        return sum;
+    }
+
+    /**
+     * Допоміжний метод для виведення результатів обчислення та обробки винятків.
+     *
+     * @param m Параметр ряду.
+     * @param k Верхня межа підсумовування.
+     */
+    static void printResults(double m, int k) {
+        System.out.printf("m:%.3f k:%d | result: ", m, k);
+        try {
+            double result = calculateSeriesSum(m, k);
+            System.out.printf("%.6f\n", result);
+        } catch (IllegalArgumentException e) {
+            System.err.println("EXCEPTION! " + e.getMessage());
+        }
+    }
+}
