@@ -1,0 +1,65 @@
+public class Main {
+    public static void main(String[] args) {
+        // Вхідні дані з таблиці (перший стовпець)
+        double a = 2.34;
+        double b = 0.756;
+        double c = 2.23;
+        double d = -1.653; // !!! Увага: d знаходиться поза діапазоном [-1, 1] для arcsin.
+
+        System.out.println("Вхідні дані: a=" + a + ", b=" + b + ", c=" + c + ", d=" + d);
+                   
+        
+        if (a <= 0) {
+            System.out.println("Помилка: 'a' повинна бути > 0 для логарифма (lg(a)).");
+            return;
+        }
+
+        // 2. arcsin(d): вимагає -1.0 <= d <= 1.0
+        if (d < -1.0 || d > 1.0) {
+            System.out.println("Помилка: 'd' (" + d + ") знаходиться поза діапазоном [-1, 1] для arcsin(d).");
+            System.out.println("Обчислення неможливе. Результат буде NaN.");
+            
+        }
+     
+        if (c <= 0) {
+            System.out.println("Помилка: 'c' повинна бути > 0 для кореня c^(1/b) (уникаємо комплексних чисел).");
+            return;
+        }
+
+        // --- Обчислення виразу: y = ( (e^c + 2 * lg(a)) / (c^(1/b)) ) * |arcsin(d)| ---
+
+        // 1. Обчислення чисельника дробу: e^c + 2 * lg(a)
+        double expC = Math.exp(c);        // e^c
+        double log10A = Math.log10(a);    // lg(a)
+        double numerator = expC + 2 * log10A;
+
+        // 2. Обчислення знаменника дробу: c^(1/b) (b-тий корінь з c)
+        // Math.pow(c, 1.0 / b)
+        double power = 1.0 / b;
+        double denominator = Math.pow(c, power);
+
+        // Перевірка ділення на нуль
+        if (denominator == 0) {
+             System.out.println("Помилка: Знаменник дорівнює нулю. Ділення неможливе.");
+             return;
+        }
+
+        // 3. Обчислення дробового множника
+        double fraction = numerator / denominator;
+
+        // 4. Обчислення другого множника: |arcsin(d)|
+        double arcsinD = Math.asin(d);    // arcsin(d) -> поверне NaN, якщо d поза [-1, 1]
+        double arcsinAbs = Math.abs(arcsinD); // |arcsin(d)|
+
+        // 5. Кінцевий результат
+        double y = fraction * arcsinAbs;
+
+        // Вивід результату
+        System.out.println("------------------------------------");
+        System.out.println("Чисельник (e^c + 2 * lg(a)): " + numerator);
+        System.out.println("Знаменник (c^(1/b)): " + denominator);
+        System.out.println("|arcsin(d)|: " + arcsinAbs);
+        System.out.println("------------------------------------");
+        System.out.println("Кінцеве значення виразу y: " + y);
+    }
+}
