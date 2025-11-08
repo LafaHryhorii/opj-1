@@ -1,0 +1,23 @@
+public class Main {
+    public static void main(String[] args) {
+        // Вхідні дані
+        double a = 0.58;
+        double b = 0.34;
+        double c = 1.25;
+        double d = -1.89;
+
+        // Обчислення виразу:
+        // y = 2 * (sin(a) / arccos(-2b)) - sqrt(ln(c * |2d|))
+        double numerator = Math.sin(a);                 // sin(a)
+        double denominator = Math.acos(-2 * b);         // arccos(-2b)
+        double firstPart = 2 * (numerator / denominator); // 2 * sin(a) / arccos(-2b)
+
+        double insideLog = c * Math.abs(2 * d);         // c * |2d|
+        double secondPart = Math.sqrt(Math.log(insideLog)); // sqrt(ln(c * |2d|))
+
+        double y = firstPart - secondPart;              // повна формула
+
+        // Вивід результату
+        System.out.println("y = " + y);
+    }
+}
