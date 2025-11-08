@@ -1,0 +1,23 @@
+public class Main {
+    public static void main(String[] args) {
+        // Вхідні дані
+        double a = -1.49;
+        double b = 23.4;
+        double c = 1.23;
+        double d = 2.254;
+
+        // Обчислення виразу:
+        // y = 2 * sqrt(tan(|a + c|)) + ln(b) / (c^d)
+
+        double absSum = Math.abs(a + c);         // |a + c|
+        double tanValue = Math.tan(absSum);      // tan(|a + c|)
+        double firstPart = 2 * Math.sqrt(tanValue); // 2 * sqrt(tan(|a + c|))
+
+        double secondPart = Math.log(b) / Math.pow(c, d); // ln(b) / (c^d)
+
+        double y = firstPart + secondPart;       // повна формула
+
+        // Вивід результату
+        System.out.println("y = " + y);
+    }
+}
