@@ -1,23 +1,64 @@
 public class Main {
     public static void main(String[] args) {
-        // Вхідні дані
+        // Вхідні дані з таблиці:
         double a = -1.49;
         double b = 23.4;
         double c = 1.23;
         double d = 2.254;
 
-        // Обчислення виразу:
-        // y = 2 * sqrt(tan(|a + c|)) + ln(b) / (c^d)
+        System.out.println("Вхідні дані: a=" + a + ", b=" + b + ", c=" + c + ", d=" + d);
 
-        double absSum = Math.abs(a + c);         // |a + c|
-        double tanValue = Math.tan(absSum);      // tan(|a + c|)
-        double firstPart = 2 * Math.sqrt(tanValue); // 2 * sqrt(tan(|a + c|))
+        // --- Перевірка області визначення функцій ---
 
-        double secondPart = Math.log(b) / Math.pow(c, d); // ln(b) / (c^d)
+        // 1. ln(b): вимагає b > 0
+        if (b <= 0) {
+            System.out.println("Помилка: 'b' повинна бути > 0 для натурального логарифма (ln(b)).");
+            return;
+        }
 
-        double y = firstPart + secondPart;       // повна формула
+               if (c <= 0) {
+             System.out.println("Помилка: 'c' повинна бути > 0 для степеня c^d (уникаємо комплексних чисел).");
+             return;
+        }
+        
+        // --- Обчислення частин виразу ---
+        
+        // 1. Обчислення аргументу тангенса: |a + c|
+        double argumentTan = Math.abs(a + c); // | -1.49 + 1.23 | = | -0.26 | = 0.26
+
+        // 2. Обчислення тангенса: tg|a + c|
+     
+        double tanValue = Math.tan(argumentTan);
+
+        // 3. Обчислення дробу: ln(b) / c^d
+        double lnB = Math.log(b);         // ln(b)
+        double cPowD = Math.pow(c, d);    // c^d
+        double fraction = lnB / cPowD;
+
+        // 4. Обчислення виразу під коренем: tg|a + c| + ln(b) / c^d
+        double insideSqrt = tanValue + fraction;
+        
+        // 5. Перевірка кореня: вираз під коренем повинен бути >= 0
+        if (insideSqrt < 0) {
+            System.out.println("Помилка: Значення під квадратним коренем (" + insideSqrt + ") є від'ємним.");
+            System.out.println("Обчислення неможливе (результат буде комплексним).");
+            return;
+        }
+
+        // --- Кінцеве обчислення ---
+        
+        // 6. Обчислення квадратного кореня
+        double sqrtValue = Math.sqrt(insideSqrt);
+
+        // 7. Обчислення кінцевого результату
+        double y = 2 * sqrtValue;
 
         // Вивід результату
-        System.out.println("y = " + y);
+        System.out.println("------------------------------------");
+        System.out.println("tg|a+c|: " + tanValue);
+        System.out.println("ln(b)/c^d: " + fraction);
+        System.out.println("Вираз під коренем: " + insideSqrt);
+        System.out.println("------------------------------------");
+        System.out.println("Кінцеве значення виразу y: " + y);
     }
 }
