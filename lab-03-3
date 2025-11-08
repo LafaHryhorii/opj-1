@@ -1,0 +1,76 @@
+package lab03;
+
+/**
+ * Клас для обчислення нескінченного ряду:
+ * S = Sum[i=0..inf] ((-2)^i / (i! * (i + 1))) з точністю epsilon.
+ *
+ * @author Gemini
+ */
+public class InfiniteSeriesCalculator {
+
+    /**
+     * Обчислює нескінченний ряд із заданою точністю epsilon.
+     *
+     * @param epsilon точність обчислення (має бути > 0 і < 1)
+     * @return сума ряду з точністю epsilon
+     * @throws IllegalArgumentException якщо epsilon некоректний
+     */
+    public static double calculateSeries(double epsilon) {
+        // Перевірка параметра точності
+        if (epsilon <= 0 || epsilon >= 1) {
+            throw new IllegalArgumentException("Epsilon має бути в межах (0, 1). Отримано: " + epsilon);
+        }
+
+        double sum = 0.0;      // накопичена сума
+        double term;           // поточний член ряду
+        int i = 0;             // лічильник
+        double factorial = 1;  // будемо рахувати факторіал поступово
+
+        do {
+            // Для i > 0 обчислюємо факторіал через попереднє значення
+            if (i > 0) factorial *= i;
+
+            // Обчислення поточного члена
+            term = Math.pow(-2, i) / (factorial * (i + 1));
+
+            // Додавання до суми
+            sum += term;
+
+            i++;
+        } while (Math.abs(term) > epsilon && i < 1000); // обмеження по ітераціях для безпеки
+
+        return sum;
+    }
+
+    /**
+     * Точка входу. Перевірка різних значень epsilon.
+     */
+    public static void main(String[] args) {
+        System.out.println("--- Тестування: Нескінченний ряд ---");
+
+        // --- Коректні значення ---
+        System.out.println("\n Дозволені комбінації:");
+        printResult(0.1);
+        printResult(0.001);
+        printResult(0.000001);
+
+        // --- Некоректні значення ---
+        System.out.println("\n Заборонені комбінації:");
+        printResult(-0.5);   // від’ємне epsilon
+        printResult(0.0);    // нульове epsilon
+        printResult(1.5);    // занадто велике epsilon
+    }
+
+    /**
+     * Допоміжний метод для безпечного виклику calculateSeries().
+     */
+    private static void printResult(double epsilon) {
+        System.out.printf("ε = %.6f → ", epsilon);
+        try {
+            double result = calculateSeries(epsilon);
+            System.out.printf("S = %.10f%n", result);
+        } catch (IllegalArgumentException e) {
+            System.err.println("EXCEPTION! " + e.getMessage());
+        }
+    }
+}
