@@ -1,0 +1,120 @@
+import java.util.Arrays;
+
+/*
+ * Клас для знаходження мінімального елемента, кратного 5, у масиві цілих чисел.
+ */
+public class MinMultipleOfFiveFinder {
+
+    /**
+     * Основний метод для реалізації завдання.
+     * Знаходить мінімальний елемент у масиві, який ділиться на 5 без залишку.
+     * * @param array Масив цілих чисел, в якому потрібно знайти елемент.
+     * @return Мінімальний елемент, кратний 5.
+     * @throws NullPointerException якщо вхідний масив є null.
+     * @throws IllegalArgumentException якщо масив порожній або не містить елементів, кратних 5.
+     */
+    public static int findMinMultipleOfFive(int[] array) {
+        // 1. Перевірка на null
+        if (array == null) {
+            throw new NullPointerException("Вхідний масив не може бути null.");
+        }
+
+        // 2. Перевірка на порожній масив
+        if (array.length == 0) {
+            throw new IllegalArgumentException("Масив не може бути порожнім.");
+        }
+
+        // Ініціалізуємо мінімальне значення максимально можливим цілим числом
+        int minMultiple = Integer.MAX_VALUE;
+        boolean foundMultiple = false; // Прапорець для відстеження, чи знайдено хоча б один кратний елемент
+
+        // 3. Ітерація по масиву
+        for (int element : array) {
+            // Перевірка на кратність 5
+            if (element % 5 == 0) {
+                foundMultiple = true;
+                // Оновлення мінімального значення
+                if (element < minMultiple) {
+                    minMultiple = element;
+                }
+            }
+        }
+
+        // 4. Перевірка, чи було знайдено хоча б один кратний 5 елемент
+        if (!foundMultiple) {
+            throw new IllegalArgumentException("Масив не містить елементів, кратних 5.");
+        }
+
+        return minMultiple;
+    }
+
+    /**
+     * Точка входу в програму. Тестує метод findMinMultipleOfFive
+    */
+    public static void main(String[] args) {
+        // --- Дозволені комбінації аргументів (успішне виконання) ---
+
+        int[] data1 = {12, 10, 3, 25, -5, 7, 50}; // Очікуваний результат: -5
+        int[] data2 = {5, 10, 15, 20}; // Очікуваний результат: 5
+        int[] data3 = {-25, -15, -5, -10}; // Очікуваний результат: -25
+
+        System.out.println("--- Успішні тести ---");
+
+        try {
+            int result1 = findMinMultipleOfFive(data1);
+            System.out.println("Масив: " + Arrays.toString(data1) + " | Мін. кратне 5: " + result1);
+        } catch (Exception e) {
+            System.out.println("Помилка для " + Arrays.toString(data1) + ": " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        }
+
+        try {
+            int result2 = findMinMultipleOfFive(data2);
+            System.out.println("Масив: " + Arrays.toString(data2) + " | Мін. кратне 5: " + result2);
+        } catch (Exception e) {
+            System.out.println("Помилка для " + Arrays.toString(data2) + ": " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        }
+        
+        try {
+            int result3 = findMinMultipleOfFive(data3);
+            System.out.println("Масив: " + Arrays.toString(data3) + " | Мін. кратне 5: " + result3);
+        } catch (Exception e) {
+            System.out.println("Помилка для " + Arrays.toString(data3) + ": " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        }
+
+        System.out.println("\n--- Тести з помилками (заборонені комбінації) ---");
+        
+        
+        // 1. null масив -> NullPointerException
+        int[] dataNull = null; 
+        testErrorCase(dataNull, "null", NullPointerException.class);
+
+        // 2. Порожній масив -> IllegalArgumentException
+        int[] dataEmpty = {}; 
+        testErrorCase(dataEmpty, "порожній", IllegalArgumentException.class);
+
+        // 3. Масив без елементів, кратних 5 -> IllegalArgumentException
+        int[] dataNoMultiple = {1, 2, 3, 4, 6, 7, 8}; 
+        testErrorCase(dataNoMultiple, Arrays.toString(dataNoMultiple) + " (без кратних 5)", IllegalArgumentException.class);
+    }
+    
+    /**
+     * Допоміжний метод для тестування випадків, що мають призвести до винятку.
+     * * @param array Тестовий масив.
+     * @param description Опис тестового випадку.
+     * @param expectedException Очікуваний клас винятку.
+     */
+    private static void testErrorCase(int[] array, String description, Class<? extends Exception> expectedException) {
+        try {
+            int result = findMinMultipleOfFive(array);
+            System.out.println("ПОМИЛКА ТЕСТУ: " + description + " повинен був кинути виняток, але повернув: " + result);
+        } catch (Exception e) {
+            boolean isExpected = expectedException.isInstance(e);
+            System.out.print("Тест: " + description + " | Очікуваний виняток: " + expectedException.getSimpleName());
+            if (isExpected) {
+                 System.out.println(" | УСПІХ: Отримано " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            } else {
+                 System.out.println(" | ПРОВАЛ: Отримано " + e.getClass().getSimpleName() + ", очікувався " + expectedException.getSimpleName());
+            }
+        }
+    }
+}
