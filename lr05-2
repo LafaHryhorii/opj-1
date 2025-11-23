@@ -1,0 +1,49 @@
+public class ByteBubbleSort {
+
+    public static void bubbleSortDesc(byte[] arr) {
+        if (arr == null) {
+            throw new NullPointerException("Масив не може бути null");
+        }
+        if (arr.length == 0) {
+            throw new IllegalArgumentException("Масив не може бути порожнім");
+        }
+
+        for (int i = 0; i < arr.length - 1; i++) {
+            for (int j = 0; j < arr.length - 1 - i; j++) {
+                if (arr[j] < arr[j + 1]) {
+                    byte temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        byte[] a1 = {15, -1, 10, 3};
+        byte[] a2 = {120, 0, 50};
+        byte[] empty = {};
+        byte[] nullArray = null;
+
+        testCase(a1, "a1");
+        testCase(a2, "a2");
+        testCase(empty, "empty");
+        testCase(nullArray, "null");
+    }
+
+    private static void testCase(byte[] arr, String name) {
+        try {
+            bubbleSortDesc(arr);
+            System.out.print(name + ": ");
+            printArray(arr);
+        } catch (Exception e) {
+            System.out.println(name + " → помилка: " + e);
+        }
+    }
+
+    private static void printArray(byte[] arr) {
+        System.out.print("[ ");
+        for (byte b : arr) System.out.print(b + " ");
+        System.out.println("]");
+    }
+}
