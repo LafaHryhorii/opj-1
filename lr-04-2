@@ -1,0 +1,64 @@
+public class GeometricMeanIndex {
+
+    // Метод, що обчислює середнє геометричне індексів мінімального та максимального елементів
+    public static double geometricMeanOfIndexes(int[] arr) {
+        // Перевірка аргументів
+        if (arr == null) {
+            throw new NullPointerException("Масив не може бути null");
+        }
+        if (arr.length == 0) {
+            throw new IllegalArgumentException("Масив не може бути порожнім");
+        }
+        if (arr.length == 1) {
+            throw new IllegalArgumentException("Масив має містити принаймні два елементи");
+        }
+
+        int minIndex = 0;
+        int maxIndex = 0;
+
+        // Пошук індексів мінімального та максимального елементів
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] < arr[minIndex]) minIndex = i;
+            if (arr[i] > arr[maxIndex]) maxIndex = i;
+        }
+
+        // Перевірка індексів (хоча тут це радше формально)
+        if (minIndex < 0 || maxIndex < 0 
+                || minIndex >= arr.length || maxIndex >= arr.length) {
+            throw new IndexOutOfBoundsException("Некоректний індекс елемента");
+        }
+
+        // Середнє геометричне індексів
+        return Math.sqrt(minIndex * maxIndex);
+    }
+
+    // Точка входу: тестуємо різні сценарії
+    public static void main(String[] args) {
+
+        // Коректні варіанти
+        int[] a1 = {5, 2, 9, 1, 7};
+        int[] a2 = {10, 20, 30, 40};
+
+        // Некоректні варіанти
+        int[] empty = {};
+        int[] single = {42};
+        int[] nullArray = null;
+
+        // Тестування у блоках try/catch
+        testCase(a1, "a1");
+        testCase(a2, "a2");
+        testCase(empty, "empty");
+        testCase(single, "single");
+        testCase(nullArray, "nullArray");
+    }
+
+    // Допоміжний метод для тестування
+    private static void testCase(int[] arr, String name) {
+        try {
+            double result = geometricMeanOfIndexes(arr);
+            System.out.println(name + " → результат: " + result);
+        } catch (Exception e) {
+            System.out.println(name + " → помилка: " + e);
+        }
+    }
+}
