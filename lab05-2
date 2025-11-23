@@ -1,0 +1,142 @@
+public class OctalStringConverter {
+
+    /**
+     * Перетворює рядок, що представляє собою число у вісімковій системі числення
+     * (radix 8), у відповідне ціле число типу int.
+     *
+     * @param octalString Рядок, що містить вісімкове число (тільки цифри 0-7).
+     * @return Відповідне десяткове ціле число (int).
+     * @throws NullPointerException Якщо вхідний рядок є null.
+     * @throws IllegalArgumentException Якщо рядок порожній або містить
+     * недозволені символи (не 0-7).
+     */
+    public static int octStringToInt(String octalString) {
+        // 1. Перевірка на NullPointerException
+        if (octalString == null) {
+            throw new NullPointerException("Вхідний рядок не може бути null.");
+        }
+
+        // 2. Перевірка на IllegalArgumentException (порожній рядок)
+        if (octalString.isEmpty()) {
+            throw new IllegalArgumentException("Вхідний рядок не може бути порожнім.");
+        }
+
+        // Виконуємо перетворення
+        int result = 0;
+        int power = 1; // Починаємо з 8^0
+        String reversedString = new StringBuilder(octalString).reverse().toString();
+
+        for (char digitChar : reversedString.toCharArray()) {
+            int digit;
+
+            // 3. Перевірка на IllegalArgumentException (недозволені символи)
+            if (digitChar >= '0' && digitChar <= '7') {
+                digit = digitChar - '0'; // Перетворення символу '0'-'7' на int 0-7
+            } else {
+                throw new IllegalArgumentException("Рядок містить недозволений символ: '" + digitChar + "'. Дозволено лише цифри 0-7.");
+            }
+
+            // Додаємо значення: digit * 8^power
+            // Також неявно перевіряємо на переповнення int, хоча в цьому простому
+            // циклі це менш ймовірно, ніж при використанні вбудованої функції,
+            // але логіка перетворення є правильною.
+            result += digit * power;
+            power *= 8;
+        }
+
+        return result;
+    }
+
+    /**
+     * Точка входу в програму для демонстрації та перевірки методу octStringToInt.
+     * Містить приклади як коректних, так і некоректних аргументів.
+     */
+    public static void main(String[] args) {
+        // --- 1. Дозволені (коректні) комбінації аргументів ---
+        System.out.println("--- Коректні перетворення ---");
+        
+        // Приклад 1: "777" -> 511
+        String arg1 = "777";
+        try {
+            int res1 = octStringToInt(arg1);
+            System.out.println("Аргумент: \"" + arg1 + "\", Результат: " + res1 + " (Очікувано: 511)");
+        } catch (Exception e) {
+            System.err.println("ПОМИЛКА для \"" + arg1 + "\": " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        }
+
+        // Приклад 2: "125" -> 85
+        String arg2 = "125";
+        try {
+            int res2 = octStringToInt(arg2);
+            System.out.println("Аргумент: \"" + arg2 + "\", Результат: " + res2 + " (Очікувано: 85)");
+        } catch (Exception e) {
+            System.err.println("ПОМИЛКА для \"" + arg2 + "\": " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        }
+
+        // Приклад 3: "0" -> 0
+        String arg3 = "0";
+        try {
+            int res3 = octStringToInt(arg3);
+            System.out.println("Аргумент: \"" + arg3 + "\", Результат: " + res3 + " (Очікувано: 0)");
+        } catch (Exception e) {
+            System.err.println("ПОМИЛКА для \"" + arg3 + "\": " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        }
+
+        // Приклад 4: Максимально довге коректне число (потенційно)
+        String arg4 = "1777777777"; // Очікується 536870911
+        try {
+            int res4 = octStringToInt(arg4);
+            System.out.println("Аргумент: \"" + arg4 + "\", Результат: " + res4 + " (Очікувано: 536870911)");
+        } catch (Exception e) {
+            System.err.println("ПОМИЛКА для \"" + arg4 + "\": " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        }
+
+
+        // --- 2. Заборонені (некоректні) комбінації аргументів ---
+        System.out.println("\n--- Некоректні перетворення (Очікується виключення) ---");
+
+        // Приклад 5: NullPointerException
+        String arg5 = null;
+        try {
+            System.out.print("Аргумент: null, ");
+            octStringToInt(arg5);
+        } catch (NullPointerException e) {
+            System.out.println("УСПІХ: Викинуто " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("ПОМИЛКА: Неправильне виключення для null.");
+        }
+
+        // Приклад 6: IllegalArgumentException (цифра 8)
+        String arg6 = "180";
+        try {
+            System.out.print("Аргумент: \"" + arg6 + "\", ");
+            octStringToInt(arg6);
+        } catch (IllegalArgumentException e) {
+            System.out.println("УСПІХ: Викинуто " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("ПОМИЛКА: Неправильне виключення для \"" + arg6 + "\".");
+        }
+
+        // Приклад 7: IllegalArgumentException (символ)
+        String arg7 = "1A2";
+        try {
+            System.out.print("Аргумент: \"" + arg7 + "\", ");
+            octStringToInt(arg7);
+        } catch (IllegalArgumentException e) {
+            System.out.println("УСПІХ: Викинуто " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("ПОМИЛКА: Неправильне виключення для \"" + arg7 + "\".");
+        }
+        
+        // Приклад 8: IllegalArgumentException (порожній рядок)
+        String arg8 = "";
+        try {
+            System.out.print("Аргумент: порожній рядок, ");
+            octStringToInt(arg8);
+        } catch (IllegalArgumentException e) {
+            System.out.println("УСПІХ: Викинуто " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("ПОМИЛКА: Неправильне виключення для порожнього рядка.");
+        }
+    }
+}
