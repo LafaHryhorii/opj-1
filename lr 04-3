@@ -1,0 +1,74 @@
+public class ConcatenateArrays {
+
+    // Метод, що об’єднує два масиви A(n) і B(m) у масив C(n+m)
+    public static int[] concat(int[] A, int[] B) {
+        if (A == null || B == null) {
+            throw new NullPointerException("Масиви A та B не можуть бути null");
+        }
+        if (A.length == 0) {
+            throw new IllegalArgumentException("Масив A не може бути порожнім");
+        }
+        if (B.length == 0) {
+            throw new IllegalArgumentException("Масив B не може бути порожнім");
+        }
+
+        int n = A.length;
+        int m = B.length;
+        int[] C = new int[n + m];
+
+        // Копіюємо масив A
+        for (int i = 0; i < n; i++) {
+            C[i] = A[i];
+        }
+
+        // Копіюємо масив B
+        for (int i = 0; i < m; i++) {
+            C[n + i] = B[i];
+        }
+
+        return C;
+    }
+
+    // Точка входу — тестуємо різні варіанти
+    public static void main(String[] args) {
+
+        // Коректні масиви
+        int[] A1 = {1, 2, 3};
+        int[] B1 = {4, 5};
+
+        int[] A2 = {10};
+        int[] B2 = {20, 30, 40};
+
+        // Некоректні варіанти
+        int[] empty = {};
+        int[] nullArray = null;
+
+        // Тестування
+        testCase(A1, B1, "A1+B1");
+        testCase(A2, B2, "A2+B2");
+        testCase(empty, B1, "empty+B1");
+        testCase(A1, empty, "A1+empty");
+        testCase(nullArray, B1, "null+B1");
+        testCase(A1, nullArray, "A1+null");
+    }
+
+    // Допоміжний метод для тестів
+    private static void testCase(int[] A, int[] B, String name) {
+        try {
+            int[] C = concat(A, B);
+            System.out.print(name + " → ");
+            printArray(C);
+        } catch (Exception e) {
+            System.out.println(name + " → помилка: " + e);
+        }
+    }
+
+    // Метод для виведення масиву
+    private static void printArray(int[] arr) {
+        System.out.print("[ ");
+        for (int x : arr) {
+            System.out.print(x + " ");
+        }
+        System.out.println("]");
+    }
+}
