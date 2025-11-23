@@ -1,0 +1,62 @@
+public class WordCounter {
+
+    /**
+     * Рахує кількість слів у реченні.
+     * Слово = будь-яка непорожня послідовність символів між пробілами.
+     */
+    public static int countWords(String sentence) {
+        if (sentence == null) {
+            throw new NullPointerException("Рядок не може бути null");
+        }
+        if (sentence.trim().isEmpty()) {
+            throw new IllegalArgumentException("Рядок не може бути порожнім або складатися лише з пробілів");
+        }
+
+        // Розбиваємо по одному або більше пробілів
+        String[] parts = sentence.trim().split("\\s+");
+        return parts.length;
+    }
+
+
+    /**
+     * Точка входу — різні тестові кейси
+     */
+    public static void main(String[] args) {
+
+        // Правильний приклад із завдання
+        String s1 = "The user with the nickname koala757677 this month left 3 times more " +
+                    "comments than the user with the nickname croco181dile181920 4 months ago";
+
+        // Інші коректні
+        String s2 = "Hello world";
+        String s3 = "One    two   three     four";  // багато пробілів
+        String s4 = "abc123 XYZ 789 test5";        // різні типи слів
+
+        // Некоректні
+        String empty = "";
+        String spaces = "      ";
+        String nullString = null;
+
+        // Тестування
+        testCase(s1, "s1");
+        testCase(s2, "s2");
+        testCase(s3, "s3");
+        testCase(s4, "s4");
+        testCase(empty, "empty");
+        testCase(spaces, "spaces");
+        testCase(nullString, "nullString");
+    }
+
+
+    /**
+     * Допоміжний метод для тестування
+     */
+    private static void testCase(String s, String label) {
+        try {
+            int result = countWords(s);
+            System.out.println(label + " → кількість слів: " + result);
+        } catch (Exception e) {
+            System.out.println(label + " → помилка: " + e);
+        }
+    }
+}
