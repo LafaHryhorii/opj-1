@@ -1,0 +1,53 @@
+public class ByteInsertionSort {
+
+    // Метод сортування масиву byte[] за спаданням (Insertion Sort)
+    public static void insertionSortDesc(byte[] arr) {
+        if (arr == null) {
+            throw new NullPointerException("Масив не може бути null");
+        }
+        if (arr.length == 0) {
+            throw new IllegalArgumentException("Масив не може бути порожнім");
+        }
+
+        for (int i = 1; i < arr.length; i++) {
+            byte key = arr[i];
+            int j = i - 1;
+
+            // Сортування за спаданням — більші значення йдуть вліво
+            while (j >= 0 && arr[j] < key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    // Точка входу — тестування роботи
+    public static void main(String[] args) {
+        byte[] a1 = {5, -1, 10, 3};
+        byte[] a2 = {120, 0, 50};
+        byte[] empty = {};
+        byte[] nullArray = null;
+
+        testCase(a1, "a1");
+        testCase(a2, "a2");
+        testCase(empty, "empty");
+        testCase(nullArray, "null");
+    }
+
+    private static void testCase(byte[] arr, String name) {
+        try {
+            insertionSortDesc(arr);
+            System.out.print(name + ": ");
+            printArray(arr);
+        } catch (Exception e) {
+            System.out.println(name + " → помилка: " + e);
+        }
+    }
+
+    private static void printArray(byte[] arr) {
+        System.out.print("[ ");
+        for (byte b : arr) System.out.print(b + " ");
+        System.out.println("]");
+    }
+}
