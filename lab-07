@@ -1,0 +1,156 @@
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+// =================== КЛАС СТУДЕНТ ===================
+class Student {
+    private String name;
+    private String surname;
+    private String recordBookNumber;
+    private double averageGrade;
+
+    public Student(String name, String surname, String recordBookNumber, double averageGrade) {
+        this.name = name;
+        this.surname = surname;
+        this.recordBookNumber = recordBookNumber;
+        this.averageGrade = averageGrade;
+    }
+
+    public double getAverageGrade() {
+        return averageGrade;
+    }
+
+    public String getFullName() {
+        return name + " " + surname;
+    }
+
+    @Override
+    public String toString() {
+        return getFullName() + ", Залікова книжка: " + recordBookNumber +
+               ", Середній бал: " + averageGrade;
+    }
+}
+
+// =================== КЛАС ФАКУЛЬТЕТ ===================
+class Faculty {
+    private String name;
+    private List<Student> students;
+
+    public Faculty(String name) {
+        this.name = name;
+        this.students = new ArrayList<>();
+    }
+
+    public void addStudent(Student s) {
+        students.add(s);
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+// =================== КЛАС ІНСТИТУТ ===================
+class Institute {
+    private String name;
+    private List<Faculty> faculties;
+
+    public Institute(String name) {
+        this.name = name;
+        this.faculties = new ArrayList<>();
+    }
+
+    public void addFaculty(Faculty f) {
+        faculties.add(f);
+    }
+
+    public List<Faculty> getFaculties() {
+        return faculties;
+    }
+}
+
+// =================== ГОЛОВНИЙ КЛАС (ДЕМО) ===================
+public class Main {
+    public static void main(String[] args) {
+
+        // --- Створення інституту, факультетів і студентів ---
+        Institute institute = new Institute("КПІ ім. Ігоря Сікорського");
+
+        Faculty f1 = new Faculty("Факультет інформатики");
+        f1.addStudent(new Student("Іван", "Петренко", "A123", 97));
+        f1.addStudent(new Student("Олег", "Сидоренко", "A124", 88));
+
+        Faculty f2 = new Faculty("Факультет математики");
+        f2.addStudent(new Student("Марія", "Коваленко", "B221", 99));
+        f2.addStudent(new Student("Оксана", "Романенко", "B222", 96));
+        f2.addStudent(new Student("Тарас", "Демченко", "B223", 91));
+
+        institute.addFaculty(f1);
+        institute.addFaculty(f2);
+
+        // =====================================================================
+        // 1) ЗНАЙТИ ЗАГАЛЬНУ КІЛЬКІСТЬ СТУДЕНТІВ (типізований for-each)
+        // =====================================================================
+        int totalStudents = 0;
+
+        for (Faculty faculty : institute.getFaculties()) {
+            for (Student s : faculty.getStudents()) {
+                totalStudents++;
+            }
+        }
+
+        System.out.println("1) Загальна кількість студентів: " + totalStudents);
+
+
+        // =====================================================================
+        // 2) ЗНАЙТИ ФАКУЛЬТЕТ, ДЕ НАЙБІЛЬШЕ СТУДЕНТІВ (типізований Iterator)
+        // =====================================================================
+        Iterator<Faculty> facultyIterator = institute.getFaculties().iterator();
+
+        Faculty largestFaculty = null;
+        int maxCount = 0;
+
+        while (facultyIterator.hasNext()) {
+            Faculty current = facultyIterator.next();
+            int count = current.getStudents().size();
+            if (count > maxCount) {
+                maxCount = count;
+                largestFaculty = current;
+            }
+        }
+
+        System.out.println("2) Факультет з найбільшою кількістю студентів: "
+                + largestFaculty.getName() + " (" + maxCount + " студентів)");
+
+
+        // =====================================================================
+        // 3) СКОМПОНУВАТИ СПИСОК СТУДЕНТІВ З БАЛОМ 95–100 (НЕтипізований Iterator)
+        // =====================================================================
+        List<Student> highAchievers = new ArrayList<>();
+
+        Iterator facultiesRawIter = institute.getFaculties().iterator();  // нетипізований ітератор
+
+        while (facultiesRawIter.hasNext()) {
+            Faculty faculty = (Faculty) facultiesRawIter.next();
+
+            Iterator studentsRawIter = faculty.getStudents().iterator(); // теж нетипізований
+
+            while (studentsRawIter.hasNext()) {
+                Student st = (Student) studentsRawIter.next();
+
+                if (st.getAverageGrade() >= 95 && st.getAverageGrade() <= 100) {
+                    highAchievers.add(st);
+                }
+            }
+        }
+
+        System.out.println("3) Студенти з середнім балом 95..100:");
+        for (Student s : highAchievers) {
+            System.out.println("   - " + s);
+        }
+    }
+}
