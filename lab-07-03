@@ -1,0 +1,287 @@
+import java.util.*;
+
+// Клас Студент
+class Student {
+    private String firstName;
+    private String lastName;
+    private String recordBookNumber;
+    private double averageGrade;
+    
+    public Student(String firstName, String lastName, String recordBookNumber, double averageGrade) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.recordBookNumber = recordBookNumber;
+        this.averageGrade = averageGrade;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+    
+    public String getRecordBookNumber() {
+        return recordBookNumber;
+    }
+    
+    public double getAverageGrade() {
+        return averageGrade;
+    }
+    
+    // Метод для перевірки чи середній бал в діапазоні 95..100
+    public boolean hasExcellentGrade() {
+        return averageGrade >= 95.0 && averageGrade <= 100.0;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("%s %s (заліковка: %s, середній бал: %.2f)", 
+            lastName, firstName, recordBookNumber, averageGrade);
+    }
+}
+
+// Клас Факультет
+class Faculty {
+    private String name;
+    private List<Student> students;
+    
+    public Faculty(String name) {
+        this.name = name;
+        this.students = new ArrayList<>();
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public List<Student> getStudents() {
+        return students;
+    }
+    
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+    
+    // Метод для отримання студентів з високими балами (95-100)
+    public List<Student> getStudentsWithHighGrades() {
+        List<Student> highGradeStudents = new ArrayList<>();
+        
+        // Використання нетипізованого ітератора
+        Iterator iterator = students.iterator();
+        while (iterator.hasNext()) {
+            Student student = (Student) iterator.next();
+            if (student.hasExcellentGrade()) {
+                highGradeStudents.add(student);
+            }
+        }
+        
+        return highGradeStudents;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Факультет '%s' (студентів: %d)", name, students.size());
+    }
+}
+
+// Клас Інститут
+class Institute {
+    private String name;
+    private List<Faculty> faculties;
+    
+    public Institute(String name) {
+        this.name = name;
+        this.faculties = new ArrayList<>();
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public List<Faculty> getFaculties() {
+        return faculties;
+    }
+    
+    public void addFaculty(Faculty faculty) {
+        faculties.add(faculty);
+    }
+    
+    // Метод для складання списку студентів з середнім балом 95-100 з усіх факультетів
+    public List<Student> getStudentsWithGrades95To100() {
+        List<Student> allExcellentStudents = new ArrayList<>();
+        
+        // Використання нетипізованого ітератора для обходу факультетів
+        Iterator facultiesIterator = faculties.iterator();
+        while (facultiesIterator.hasNext()) {
+            Faculty faculty = (Faculty) facultiesIterator.next();
+            
+            // Використання нетипізованого ітератора для обходу студентів факультету
+            Iterator studentsIterator = faculty.getStudents().iterator();
+            while (studentsIterator.hasNext()) {
+                Student student = (Student) studentsIterator.next();
+                if (student.hasExcellentGrade()) {
+                    allExcellentStudents.add(student);
+                }
+            }
+        }
+        
+        return allExcellentStudents;
+    }
+    
+    // Другий метод з вдосконаленим виведенням інформації
+    public void findAndDisplayExcellentStudents() {
+        System.out.println("Пошук студентів з середнім балом 95-100 в інституті '" + name + "':");
+        System.out.println("=".repeat(70));
+        
+        List<Student> excellentStudents = new ArrayList<>();
+        int totalChecked = 0;
+        
+        // Використання нетипізованого ітератора
+        Iterator iterator = faculties.iterator();
+        while (iterator.hasNext()) {
+            Faculty faculty = (Faculty) iterator.next();
+            
+            System.out.println("\nФакультет: " + faculty.getName());
+            System.out.println("-".repeat(40));
+            
+            Iterator studentIterator = faculty.getStudents().iterator();
+            boolean foundOnFaculty = false;
+            
+            while (studentIterator.hasNext()) {
+                Student student = (Student) studentIterator.next();
+                totalChecked++;
+                
+                if (student.hasExcellentGrade()) {
+                    excellentStudents.add(student);
+                    System.out.println("  ✓ " + student);
+                    foundOnFaculty = true;
+                }
+            }
+            
+            if (!foundOnFaculty) {
+                System.out.println("  На цьому факультеті немає студентів з балом 95-100");
+            }
+        }
+        
+        // Виведення загальних результатів
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("ПІДСУМОК:");
+        System.out.println("Перевірено студентів: " + totalChecked);
+        System.out.println("Знайдено студентів з середнім балом 95-100: " + excellentStudents.size());
+        
+        if (!excellentStudents.isEmpty()) {
+            System.out.println("\nСписок відмінників:");
+            // Сортування за середнім балом (спадання)
+            excellentStudents.sort((s1, s2) -> Double.compare(s2.getAverageGrade(), s1.getAverageGrade()));
+            
+            Iterator resultIterator = excellentStudents.iterator();
+            int counter = 1;
+            while (resultIterator.hasNext()) {
+                Student student = (Student) resultIterator.next();
+                System.out.printf("%2d. %s%n", counter++, student);
+            }
+        }
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Інститут '%s' (факультетів: %d)", name, faculties.size());
+    }
+}
+
+// Головний клас для демонстрації
+public class Main {
+    public static void main(String[] args) {
+        // Створення інституту
+        Institute institute = new Institute("КПІ ім. Ігоря Сікорського");
+        
+        // Створення факультетів
+        Faculty mathFaculty = new Faculty("Механіко-математичний факультет");
+        Faculty physicsFaculty = new Faculty("Факультет фізики");
+        Faculty chemistryFaculty = new Faculty("Хімічний факультет");
+        
+        // Додавання студентів на механіко-математичний факультет
+        mathFaculty.addStudent(new Student("Олександр", "Петренко", "ММ2023001", 97.5));
+        mathFaculty.addStudent(new Student("Марія", "Коваль", "ММ2023002", 88.0));
+        mathFaculty.addStudent(new Student("Іван", "Шевченко", "ММ2023003", 95.2));
+        mathFaculty.addStudent(new Student("Анна", "Бондаренко", "ММ2023004", 91.7));
+        mathFaculty.addStudent(new Student("Дмитро", "Ткачук", "ММ2023005", 99.8));
+        
+        // Додавання студентів на факультет фізики
+        physicsFaculty.addStudent(new Student("Андрій", "Мельник", "ФФ2023001", 85.5));
+        physicsFaculty.addStudent(new Student("Ольга", "Кравченко", "ФФ2023002", 96.2));
+        physicsFaculty.addStudent(new Student("Павло", "Сидоренко", "ФФ2023003", 82.7));
+        physicsFaculty.addStudent(new Student("Наталія", "Іваненко", "ФФ2023004", 98.9));
+        physicsFaculty.addStudent(new Student("Юрій", "Лисенко", "ФФ2023005", 94.8));
+        
+        // Додавання студентів на хімічний факультет
+        chemistryFaculty.addStudent(new Student("Юлія", "Шевчук", "ХФ2023001", 92.8));
+        chemistryFaculty.addStudent(new Student("Максим", "Бойко", "ХФ2023002", 84.3));
+        chemistryFaculty.addStudent(new Student("Катерина", "Гончаренко", "ХФ2023003", 100.0));
+        chemistryFaculty.addStudent(new Student("Артем", "Василенко", "ХФ2023004", 86.5));
+        chemistryFaculty.addStudent(new Student("Вікторія", "Павленко", "ХФ2023005", 95.0));
+        chemistryFaculty.addStudent(new Student("Олег", "Даниленко", "ХФ2023006", 87.9));
+        
+        // Додавання факультетів до інституту
+        institute.addFaculty(mathFaculty);
+        institute.addFaculty(physicsFaculty);
+        institute.addFaculty(chemistryFaculty);
+        
+        // Виведення інформації про інститут
+        System.out.println(institute);
+        System.out.println();
+        
+        // Спосіб 1: Використання методу з детальним виведенням
+        institute.findAndDisplayExcellentStudents();
+        
+        System.out.println("\n" + "=".repeat(70) + "\n");
+        
+        // Спосіб 2: Використання простого методу, що повертає список
+        List<Student> excellentStudents = institute.getStudentsWithGrades95To100();
+        System.out.println("Результат через getStudentsWithGrades95To100():");
+        System.out.println("Знайдено студентів: " + excellentStudents.size());
+        
+        // Виведення через нетипізований ітератор
+        Iterator iterator = excellentStudents.iterator();
+        while (iterator.hasNext()) {
+            Student student = (Student) iterator.next();
+            System.out.println("  - " + student);
+        }
+        
+        // Демонстрація використання нетипізованого ітератора на рівні факультету
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("Пошук відмінників на окремих факультетах:");
+        
+        // Отримання списку факультетів
+        List<Faculty> facultiesList = institute.getFaculties();
+        Iterator facultiesIterator = facultiesList.iterator();
+        
+        while (facultiesIterator.hasNext()) {
+            Faculty faculty = (Faculty) facultiesIterator.next();
+            List<Student> facultyExcellentStudents = faculty.getStudentsWithHighGrades();
+            
+            System.out.println("\n" + faculty.getName() + ": " + 
+                             facultyExcellentStudents.size() + " відмінників");
+            
+            if (!facultyExcellentStudents.isEmpty()) {
+                Iterator studentIterator = facultyExcellentStudents.iterator();
+                while (studentIterator.hasNext()) {
+                    Student student = (Student) studentIterator.next();
+                    System.out.println("  * " + student.getLastName() + " " + 
+                                     student.getFirstName() + " - " + 
+                                     student.getAverageGrade() + " балів");
+                }
+            }
+        }
+        
+        // Тест з порожнім інститутом
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("Тест з порожнім інститутом:");
+        Institute emptyInstitute = new Institute("Порожній інститут");
+        List<Student> emptyResult = emptyInstitute.getStudentsWithGrades95To100();
+        System.out.println("Результат для порожнього інституту: " + 
+                          emptyResult.size() + " студентів");
+    }
+}
