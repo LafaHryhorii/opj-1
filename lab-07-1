@@ -1,0 +1,177 @@
+import java.util.ArrayList;
+import java.util.List;
+
+// Клас Студент
+class Student {
+    private String firstName;
+    private String lastName;
+    private String recordBookNumber;
+    private double averageGrade;
+    
+    public Student(String firstName, String lastName, String recordBookNumber, double averageGrade) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.recordBookNumber = recordBookNumber;
+        this.averageGrade = averageGrade;
+    }
+    
+    
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+    
+    public String getRecordBookNumber() {
+        return recordBookNumber;
+    }
+    
+    public double getAverageGrade() {
+        return averageGrade;
+    }
+    
+    @Override
+    public String toString() {
+        return "Student{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", recordBookNumber='" + recordBookNumber + '\'' +
+                ", averageGrade=" + averageGrade +
+                '}';
+    }
+}
+
+// Клас Факультет
+class Faculty {
+    private String name;
+    private List<Student> students;
+    
+    public Faculty(String name) {
+        this.name = name;
+        this.students = new ArrayList<>();
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public List<Student> getStudents() {
+        return students;
+    }
+    
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+    
+    public int getStudentsCount() {
+        return students.size();
+    }
+    
+    @Override
+    public String toString() {
+        return "Faculty{" +
+                "name='" + name + '\'' +
+                ", studentsCount=" + students.size() +
+                '}';
+    }
+}
+
+// Клас Інститут
+class Institute {
+    private String name;
+    private List<Faculty> faculties;
+    
+    public Institute(String name) {
+        this.name = name;
+        this.faculties = new ArrayList<>();
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public List<Faculty> getFaculties() {
+        return faculties;
+    }
+    
+    public void addFaculty(Faculty faculty) {
+        faculties.add(faculty);
+    }
+    
+    // Метод для знаходження загальної кількості студентів в інституті
+    public int getTotalStudentsCount() {
+        int total = 0;
+        
+        // Типізований цикл for-each для обходу факультетів
+        for (Faculty faculty : faculties) {
+            total += faculty.getStudentsCount();
+        }
+        
+        return total;
+    }
+    
+    @Override
+    public String toString() {
+        return "Institute{" +
+                "name='" + name + '\'' +
+                ", facultiesCount=" + faculties.size() +
+                '}';
+    }
+}
+
+// Приклад використання
+public class Main {
+    public static void main(String[] args) {
+        // Створення інституту
+        Institute institute = new Institute("КПІ ім. Ігоря Сікорського");
+        
+        // Створення факультетів
+        Faculty engineeringFaculty = new Faculty("Інженерний факультет");
+        Faculty computerScienceFaculty = new Faculty("Факультет комп'ютерних наук");
+        Faculty economicsFaculty = new Faculty("Економічний факультет");
+        
+        // Додавання студентів на інженерний факультет
+        engineeringFaculty.addStudent(new Student("Іван", "Петренко", "ЕН2023001", 85.5));
+        engineeringFaculty.addStudent(new Student("Марія", "Коваленко", "ЕН2023002", 92.0));
+        engineeringFaculty.addStudent(new Student("Олексій", "Сидоренко", "ЕН2023003", 78.3));
+        
+        // Додавання студентів на факультет комп'ютерних наук
+        computerScienceFaculty.addStudent(new Student("Андрій", "Іваненко", "КН2023001", 95.2));
+        computerScienceFaculty.addStudent(new Student("Ольга", "Шевченко", "КН2023002", 88.7));
+        computerScienceFaculty.addStudent(new Student("Дмитро", "Бойко", "КН2023003", 91.4));
+        computerScienceFaculty.addStudent(new Student("Наталія", "Ткаченко", "КН2023004", 86.9));
+        
+        // Додавання студентів на економічний факультет
+        economicsFaculty.addStudent(new Student("Софія", "Мельник", "ЕК2023001", 79.8));
+        economicsFaculty.addStudent(new Student("Павло", "Кравченко", "ЕК2023002", 82.1));
+        
+        // Додавання факультетів до інституту
+        institute.addFaculty(engineeringFaculty);
+        institute.addFaculty(computerScienceFaculty);
+        institute.addFaculty(economicsFaculty);
+        
+        // Знаходження загальної кількості студентів
+        int totalStudents = institute.getTotalStudentsCount();
+        
+        // Виведення результатів
+        System.out.println("Інститут: " + institute.getName());
+        System.out.println("Кількість факультетів: " + institute.getFaculties().size());
+        System.out.println("\nСписок факультетів:");
+        
+        for (Faculty faculty : institute.getFaculties()) {
+            System.out.println("  - " + faculty.getName() + ": " + faculty.getStudentsCount() + " студентів");
+        }
+        
+        System.out.println("\nЗагальна кількість студентів в інституті: " + totalStudents);
+        
+        // Демонстрація типізованого циклу for-each для студентів
+        System.out.println("\nДетальний список студентів на факультеті комп'ютерних наук:");
+        for (Student student : computerScienceFaculty.getStudents()) {
+            System.out.println("  - " + student.getLastName() + " " + student.getFirstName() + 
+                             " (заліковка: " + student.getRecordBookNumber() + 
+                             ", середній бал: " + student.getAverageGrade() + ")");
+        }
+    }
+}
