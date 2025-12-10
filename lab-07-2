@@ -1,0 +1,245 @@
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+// Клас Студент
+class Student {
+    private String firstName;
+    private String lastName;
+    private String recordBookNumber;
+    private double averageGrade;
+    
+    public Student(String firstName, String lastName, String recordBookNumber, double averageGrade) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.recordBookNumber = recordBookNumber;
+        this.averageGrade = averageGrade;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+    
+    public String getRecordBookNumber() {
+        return recordBookNumber;
+    }
+    
+    public double getAverageGrade() {
+        return averageGrade;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("%s %s (заліковка: %s, середній бал: %.1f)", 
+            lastName, firstName, recordBookNumber, averageGrade);
+    }
+}
+
+// Клас Факультет
+class Faculty {
+    private String name;
+    private List<Student> students;
+    
+    public Faculty(String name) {
+        this.name = name;
+        this.students = new ArrayList<>();
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public List<Student> getStudents() {
+        return students;
+    }
+    
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+    
+    public int getStudentsCount() {
+        return students.size();
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Факультет '%s' (студентів: %d)", name, students.size());
+    }
+}
+
+// Клас Інститут
+class Institute {
+    private String name;
+    private List<Faculty> faculties;
+    
+    public Institute(String name) {
+        this.name = name;
+        this.faculties = new ArrayList<>();
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public List<Faculty> getFaculties() {
+        return faculties;
+    }
+    
+    public void addFaculty(Faculty faculty) {
+        faculties.add(faculty);
+    }
+    
+    // Метод для знаходження факультету з найбільшою кількістю студентів
+    public Faculty findFacultyWithMostStudents() {
+        if (faculties.isEmpty()) {
+            return null;
+        }
+        
+        // Ініціалізація змінних
+        Faculty facultyWithMostStudents = null;
+        int maxStudents = -1;
+        
+        // Використання типізованого ітератора для обходу списку факультетів
+        Iterator<Faculty> iterator = faculties.iterator();
+        
+        while (iterator.hasNext()) {
+            Faculty currentFaculty = iterator.next();
+            int currentStudentsCount = currentFaculty.getStudentsCount();
+            
+            if (currentStudentsCount > maxStudents) {
+                maxStudents = currentStudentsCount;
+                facultyWithMostStudents = currentFaculty;
+            }
+        }
+        
+        return facultyWithMostStudents;
+    }
+    
+    // Альтернативний метод з додатковим виведенням інформації
+    public void findAndDisplayFacultyWithMostStudents() {
+        if (faculties.isEmpty()) {
+            System.out.println("В інституті немає факультетів");
+            return;
+        }
+        
+        Faculty mostPopulatedFaculty = null;
+        int maxStudents = -1;
+        
+        // Використання типізованого ітератора
+        Iterator<Faculty> iterator = faculties.iterator();
+        
+        System.out.println("Пошук факультету з найбільшою кількістю студентів:");
+        System.out.println("=".repeat(50));
+        
+        while (iterator.hasNext()) {
+            Faculty currentFaculty = iterator.next();
+            int currentCount = currentFaculty.getStudentsCount();
+            
+            System.out.printf("%s - %d студентів%n", 
+                currentFaculty.getName(), currentCount);
+            
+            if (currentCount > maxStudents) {
+                maxStudents = currentCount;
+                mostPopulatedFaculty = currentFaculty;
+            }
+        }
+        
+        if (mostPopulatedFaculty != null) {
+            System.out.println("\nФакультет з найбільшою кількістю студентів:");
+            System.out.println(mostPopulatedFaculty);
+        }
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Інститут '%s' (факультетів: %d)", name, faculties.size());
+    }
+}
+
+// Головний клас для демонстрації
+public class Main {
+    public static void main(String[] args) {
+        // Створення інституту
+        Institute institute = new Institute("КПІ ім. Ігоря Сікорського");
+        
+        // Створення факультетів
+        Faculty computerScience = new Faculty("Факультет комп'ютерних наук та кібербезпеки");
+        Faculty engineering = new Faculty("Інженерний факультет");
+        Faculty economics = new Faculty("Факультет економіки та менеджменту");
+        Faculty law = new Faculty("Юридичний факультет");
+        
+        // Додавання студентів на факультет комп'ютерних наук
+        computerScience.addStudent(new Student("Олександр", "Петренко", "КН2023001", 92.5));
+        computerScience.addStudent(new Student("Марія", "Коваль", "КН2023002", 88.0));
+        computerScience.addStudent(new Student("Іван", "Шевченко", "КН2023003", 95.2));
+        computerScience.addStudent(new Student("Анна", "Бондаренко", "КН2023004", 91.7));
+        computerScience.addStudent(new Student("Дмитро", "Ткачук", "КН2023005", 87.3));
+        computerScience.addStudent(new Student("Софія", "Лисенко", "КН2023006", 94.1));
+        
+        // Додавання студентів на інженерний факультет
+        engineering.addStudent(new Student("Андрій", "Мельник", "ІН2023001", 85.5));
+        engineering.addStudent(new Student("Ольга", "Кравченко", "ІН2023002", 90.2));
+        engineering.addStudent(new Student("Павло", "Сидоренко", "ІН2023003", 82.7));
+        engineering.addStudent(new Student("Наталія", "Іваненко", "ІН2023004", 88.9));
+        
+        // Додавання студентів на економічний факультет
+        economics.addStudent(new Student("Юлія", "Шевчук", "ЕК2023001", 79.8));
+        economics.addStudent(new Student("Максим", "Бойко", "ЕК2023002", 84.3));
+        economics.addStudent(new Student("Катерина", "Гончаренко", "ЕК2023003", 91.0));
+        economics.addStudent(new Student("Артем", "Василенко", "ЕК2023004", 86.5));
+        economics.addStudent(new Student("Вікторія", "Павленко", "ЕК2023005", 89.2));
+        
+        // Додавання студентів на юридичний факультет
+        law.addStudent(new Student("Олег", "Даниленко", "ЮР2023001", 93.4));
+        law.addStudent(new Student("Аліна", "Семенюк", "ЮР2023002", 87.9));
+        
+        // Додавання факультетів до інституту
+        institute.addFaculty(computerScience);
+        institute.addFaculty(engineering);
+        institute.addFaculty(economics);
+        institute.addFaculty(law);
+        
+        // Виведення інформації про інститут
+        System.out.println(institute);
+        System.out.println();
+        
+        // Пошук факультету з найбільшою кількістю студентів
+        // Спосіб 1: Використання методу з виведенням деталей
+        institute.findAndDisplayFacultyWithMostStudents();
+        
+        System.out.println("\n" + "=".repeat(50) + "\n");
+        
+        // Спосіб 2: Використання методу, що повертає факультет
+        Faculty mostPopulated = institute.findFacultyWithMostStudents();
+        if (mostPopulated != null) {
+            System.out.println("Результат пошуку (через метод, що повертає значення):");
+            System.out.println("Факультет: " + mostPopulated.getName());
+            System.out.println("Кількість студентів: " + mostPopulated.getStudentsCount());
+            
+            // Додатково: виведення списку студентів цього факультету
+            System.out.println("\nСписок студентів на цьому факультеті:");
+            List<Student> students = mostPopulated.getStudents();
+            
+            // Використання іншого типу ітератора для демонстрації
+            Iterator<Student> studentIterator = students.iterator();
+            int counter = 1;
+            
+            while (studentIterator.hasNext()) {
+                Student student = studentIterator.next();
+                System.out.printf("%d. %s%n", counter++, student);
+            }
+        }
+        
+        // Демонстрація роботи з пустим інститутом
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("Тест з пустим інститутом:");
+        Institute emptyInstitute = new Institute("Пустий інститут");
+        Faculty result = emptyInstitute.findFacultyWithMostStudents();
+        System.out.println("Результат для пустого інституту: " + 
+                          (result == null ? "немає факультетів" : result.getName()));
+    }
+}
