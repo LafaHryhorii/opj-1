@@ -1,0 +1,238 @@
+import java.util.*;
+
+// ======================
+// Клас Студент
+// ======================
+class Student {
+    private String firstName;
+    private String lastName;
+    private String recordBookNumber;
+    private double averageGrade;
+
+    public Student(String firstName, String lastName, String recordBookNumber, double averageGrade) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.recordBookNumber = recordBookNumber;
+        this.averageGrade = averageGrade;
+    }
+
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String getRecordBookNumber() { return recordBookNumber; }
+    public double getAverageGrade() { return averageGrade; }
+
+    public boolean hasExcellentGrade() {
+        return averageGrade >= 95 && averageGrade <= 100;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s (заліковка: %s, бал: %.2f)",
+                lastName, firstName, recordBookNumber, averageGrade);
+    }
+}
+
+// ======================
+// Клас Факультет
+// ======================
+class Faculty {
+    private String name;
+    private Set<Student> students;
+
+    public Faculty(String name) {
+        this.name = name;
+        this.students = new HashSet<>();
+    }
+
+    public String getName() { return name; }
+
+    public Set<Student> getStudents() { return students; }
+
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+
+    public Set<Student> getStudentsWithHighGrades() {
+        Set<Student> result = new HashSet<>();
+
+        Iterator<Student> iterator = students.iterator();
+        while (iterator.hasNext()) {
+            Student s = iterator.next();
+            if (s.hasExcellentGrade()) {
+                result.add(s);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Факультет '" + name + "', студентів: " + students.size();
+    }
+}
+
+// ======================
+// Клас Інститут
+// ======================
+class Institute {
+    private String name;
+
+    // заміна List → Set
+    private Set<Faculty> faculties;
+
+    // додана Map: індекс студентів за заліковою
+    private Map<String, Student> studentIndex;
+
+    public Institute(String name) {
+        this.name = name;
+        this.faculties = new HashSet<>();
+        this.studentIndex = new HashMap<>();
+    }
+
+    public void addFaculty(Faculty faculty) {
+        faculties.add(faculty);
+
+        // оновити індекс студентів
+        for (Student s : faculty.getStudents()) {
+            studentIndex.put(s.getRecordBookNumber(), s);
+        }
+    }
+
+    public Student findStudentByRecordBook(String bookNumber) {
+        return studentIndex.get(bookNumber);
+    }
+
+    public Set<Faculty> getFaculties() {
+        return faculties;
+    }
+
+    // збирання відмінників
+    public Set<Student> getStudentsWithGrades95To100() {
+        Set<Student> result = new HashSet<>();
+
+        Iterator<Faculty> facIterator = faculties.iterator();
+        while (facIterator.hasNext()) {
+            Faculty f = facIterator.next();
+
+            Iterator<Student> studIterator = f.getStudents().iterator();
+            while (studIterator.hasNext()) {
+                Student s = studIterator.next();
+                if (s.hasExcellentGrade()) {
+                    result.add(s);
+                }
+            }
+        }
+        return result;
+    }
+
+    public void findAndDisplayExcellentStudents() {
+        System.out.println("Пошук студентів з балом 95–100 в інституті '" + name + "'");
+        System.out.println("=".repeat(70));
+
+        Set<Student> excellentStudents = new HashSet<>();
+        int totalChecked = 0;
+
+        Iterator<Faculty> iterator = faculties.iterator();
+        while (iterator.hasNext()) {
+            Faculty f = iterator.next();
+
+            System.out.println("\nФакультет: " + f.getName());
+            System.out.println("-".repeat(40));
+
+            boolean found = false;
+
+            Iterator<Student> studentIterator = f.getStudents().iterator();
+            while (studentIterator.hasNext()) {
+                Student s = studentIterator.next();
+                totalChecked++;
+
+                if (s.hasExcellentGrade()) {
+                    found = true;
+                    excellentStudents.add(s);
+                    System.out.println("  ✓ " + s);
+                }
+            }
+            if (!found)
+                System.out.println("  Немає студентів з балом 95–100");
+        }
+
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("ПІДСУМОК:");
+        System.out.println("Перевірено студентів: " + totalChecked);
+        System.out.println("Знайдено відмінників: " + excellentStudents.size());
+
+        if (!excellentStudents.isEmpty()) {
+            System.out.println("\nСписок відмінників:");
+
+            List<Student> sorted = new ArrayList<>(excellentStudents);
+            sorted.sort((a, b) -> Double.compare(b.getAverageGrade(), a.getAverageGrade()));
+
+            int i = 1;
+            for (Student s : sorted) {
+                System.out.println(i++ + ". " + s);
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Інститут '" + name + "', факультетів: " + faculties.size();
+    }
+}
+
+// ======================
+// MAIN
+// ======================
+public class Main {
+    public static void main(String[] args) {
+
+        Institute institute = new Institute("КПІ ім. Ігоря Сікорського");
+
+        Faculty math = new Faculty("Механіко-математичний факультет");
+        math.addStudent(new Student("Олександр", "Петренко", "ММ2023001", 97.5));
+        math.addStudent(new Student("Марія", "Коваль", "ММ2023002", 88.0));
+        math.addStudent(new Student("Іван", "Шевченко", "ММ2023003", 95.2));
+        math.addStudent(new Student("Анна", "Бондаренко", "ММ2023004", 91.7));
+        math.addStudent(new Student("Дмитро", "Ткачук", "ММ2023005", 99.8));
+
+        Faculty physics = new Faculty("Факультет фізики");
+        physics.addStudent(new Student("Андрій", "Мельник", "ФФ2023001", 85.5));
+        physics.addStudent(new Student("Ольга", "Кравченко", "ФФ2023002", 96.2));
+        physics.addStudent(new Student("Павло", "Сидоренко", "ФФ2023003", 82.7));
+        physics.addStudent(new Student("Наталія", "Іваненко", "ФФ2023004", 98.9));
+        physics.addStudent(new Student("Юрій", "Лисенко", "ФФ2023005", 94.8));
+
+        Faculty chemistry = new Faculty("Хімічний факультет");
+        chemistry.addStudent(new Student("Юлія", "Шевчук", "ХФ2023001", 92.8));
+        chemistry.addStudent(new Student("Максим", "Бойко", "ХФ2023002", 84.3));
+        chemistry.addStudent(new Student("Катерина", "Гончаренко", "ХФ2023003", 100.0));
+        chemistry.addStudent(new Student("Артем", "Василенко", "ХФ2023004", 86.5));
+        chemistry.addStudent(new Student("Вікторія", "Павленко", "ХФ2023005", 95.0));
+        chemistry.addStudent(new Student("Олег", "Даниленко", "ХФ2023006", 87.9));
+
+        institute.addFaculty(math);
+        institute.addFaculty(physics);
+        institute.addFaculty(chemistry);
+
+        System.out.println(institute);
+        System.out.println();
+
+        // детальний пошук
+        institute.findAndDisplayExcellentStudents();
+
+        System.out.println("\n".repeat(2) + "=".repeat(70));
+
+        // простий варіант
+        Set<Student> excellent = institute.getStudentsWithGrades95To100();
+        System.out.println("Через getStudentsWithGrades95To100(): " + excellent.size());
+
+        Iterator<Student> it = excellent.iterator();
+        while (it.hasNext())
+            System.out.println("  - " + it.next());
+
+        // демонстрація Map: пошук за номером залікової
+        System.out.println("\nПошук студента за заліковкою ММ2023005:");
+        Student found = institute.findStudentByRecordBook("ММ2023005");
+        System.out.println(found != null ? found : "Не знайдено");
+    }
+}
